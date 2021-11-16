@@ -29,11 +29,16 @@ namespace BusenessLogic
         {
             List<Account> list = GetAll();
             List<Account> result = new List<Account>();
-            result.Add(list.Find(x => 
-            (x.AccountName.Contains(key))
-            || (x.FullName.Contains(key))
-            || (x.Email.Contains(key))
-            || (x.Tell.Contains(key))));
+            
+            foreach(var item in list)
+            {
+                if(
+                item.AccountName.Contains(key)
+                || item.FullName.Contains(key)
+                || item.Email.Contains(key)
+                || item.Tell.Contains(key))
+                    result.Add(item);
+            }
             return result;
         }
 
