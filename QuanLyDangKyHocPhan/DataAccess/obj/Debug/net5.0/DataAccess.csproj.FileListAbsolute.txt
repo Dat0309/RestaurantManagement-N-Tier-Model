@@ -1,0 +1,5 @@
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\DataAccess\obj\Debug\net5.0\DataAccess.csproj.AssemblyReference.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\DataAccess\obj\Debug\net5.0\DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\DataAccess\obj\Debug\net5.0\DataAccess.AssemblyInfoInputs.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\DataAccess\obj\Debug\net5.0\DataAccess.AssemblyInfo.cs
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\DataAccess\obj\Debug\net5.0\DataAccess.csproj.CoreCompileInputs.cache

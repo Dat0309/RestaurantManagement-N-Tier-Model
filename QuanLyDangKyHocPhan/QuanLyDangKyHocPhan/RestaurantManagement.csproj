@@ -349,5 +349,18 @@
   <ItemGroup>
     <None Include="Resources\icons8_table_properties_50px.png" />
   </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BusenessLogic\BusenessLogic.csproj">
+      <Project>{71c0bd25-c3cc-4bbc-95df-8af78b429e53}</Project>
+      <Name>BusenessLogic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
+      <Project>{c532d6d3-f8a5-47fa-b5f3-6e06ea756a12}</Project>
+      <Name>DataAccess</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
