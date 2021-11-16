@@ -5,7 +5,17 @@
       "ProjectGuid": "5ca8e49a-b82a-40a4-bcf1-2c028d94d6d4",
       "DisplayName": "RestaurantManagement",
       "ColorIndex": 0
+    },
+    "71c0bd25-c3cc-4bbc-95df-8af78b429e53": {
+      "ProjectGuid": "71c0bd25-c3cc-4bbc-95df-8af78b429e53",
+      "DisplayName": "BusenessLogic",
+      "ColorIndex": 1
+    },
+    "c532d6d3-f8a5-47fa-b5f3-6e06ea756a12": {
+      "ProjectGuid": "c532d6d3-f8a5-47fa-b5f3-6e06ea756a12",
+      "DisplayName": "DataAccess",
+      "ColorIndex": 2
     }
   },
-  "NextColorIndex": 1
+  "NextColorIndex": 3
 }
