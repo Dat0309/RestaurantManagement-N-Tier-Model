@@ -1,5 +1,4 @@
-﻿using QuanLyDangKyHocPhan.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,13 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static QuanLyDangKyHocPhan.TableForm;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan.CustomControl
 {
     public partial class TableControll : UserControl
     {
         private string billID;
-        private Tables table;
+        private Table table;
         public Load send;
         public TableControll()
         {
@@ -28,67 +29,31 @@ namespace QuanLyDangKyHocPhan.CustomControl
             InitializeComponent();
             this.send = sender;
         }
-        private void InsertBillsTable()
+        private int InsertBillsTable()
         {
-            try
-            {
-                string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection conn = new SqlConnection(connString);
-                SqlCommand cmd = conn.CreateCommand();
+            Bill bill = new Bill();
+            bill.Id = 0;
+            bill.Name = "Hoá đơn bàn " + table.Name;
+            bill.TableId = table.Id;
+            bill.Amount = 0;
+            bill.Discount = 0;
+            bill.Tax = 0;
+            bill.Status = false;
+            bill.CheckoutDate = DateTime.Now;
+            bill.Account = "dtdat";
 
-                cmd.CommandText = "Execute Bills_Insert @id output,@name,@tableId,@amount,@discount,@tax,@status,@date,@account";
-
-                cmd.Parameters.Add("@id", SqlDbType.Int);
-                cmd.Parameters.Add("@name", SqlDbType.NVarChar, 1000);
-                cmd.Parameters.Add("@tableId", SqlDbType.Int);
-                cmd.Parameters.Add("@amount", SqlDbType.Int);
-                cmd.Parameters.Add("@discount", SqlDbType.Float);
-                cmd.Parameters.Add("@tax", SqlDbType.Float);
-                cmd.Parameters.Add("@status", SqlDbType.Bit);
-                cmd.Parameters.Add("@date", SqlDbType.SmallDateTime);
-                cmd.Parameters.Add("@account", SqlDbType.NVarChar, 100);
-
-                cmd.Parameters["@id"].Direction = ParameterDirection.Output;
-
-                cmd.Parameters["@name"].Value = "Hoá đơn bàn " + table.name;
-                cmd.Parameters["@tableId"].Value = table.id;
-                cmd.Parameters["@amount"].Value = 0;
-                cmd.Parameters["@discount"].Value = 0;
-                cmd.Parameters["@tax"].Value = 0;
-                cmd.Parameters["@status"].Value = false;
-                cmd.Parameters["@date"].Value = DateTime.Now.ToShortDateString();
-                cmd.Parameters["@account"].Value = "dtdat";
-
-                conn.Open();
-
-                cmd.ExecuteNonQuery();
-                billID = cmd.Parameters["@id"].Value.ToString();
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "SQL Error");
-            }
+            BillBL billBL = new BillBL();
+            return billBL.Insert(bill);
         }
 
-        private void UpdateStatusTable(int status)
+        private int UpdateStatusTable(int status)
         {
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            Table table = this.table;
+            table.Id = this.table.Id;
+            table.Status = status;
 
-            cmd.CommandText = "EXECUTE TableStatus_Update @id,@status";
-
-            cmd.Parameters.Add("@id", SqlDbType.Int);
-            cmd.Parameters.Add("@status", SqlDbType.Int);
-
-            cmd.Parameters["@id"].Value = table.id;
-            cmd.Parameters["@status"].Value = status;
-
-            conn.Open();
-
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            TableBL tableBL = new TableBL();
+            return tableBL.TableStatus_Update(table);
         }
 
         private void TableControll_Load(object sender, EventArgs e)
@@ -120,7 +85,7 @@ namespace QuanLyDangKyHocPhan.CustomControl
                 try
                 {
                     BillForm billForm = new BillForm();
-                    billForm.LoadBills(table.id);
+                    billForm.LoadBills(table.Id);
                     //billForm.FormClosing += new FormClosingEventHandler(frmClosed);
                     if(billForm.ShowDialog(this) == DialogResult.OK)
                     {
@@ -139,7 +104,7 @@ namespace QuanLyDangKyHocPhan.CustomControl
         //    LoadStatus(0);
         //}
 
-        public void LoadTableName(string tableName, Tables currentTable)
+        public void LoadTableName(string tableName, Table currentTable)
         {
             this.table = currentTable;
             lbNameTable.Text = "Bàn " + tableName;

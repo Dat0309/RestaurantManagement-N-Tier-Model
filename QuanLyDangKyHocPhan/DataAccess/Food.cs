@@ -14,5 +14,21 @@ namespace DataAccess
         public int FoodCategoryID { get; set; }
         public int Price { get; set; }
         public string Notes { get; set; }
+        public string Picture { get; set; }
+
+        public Food()
+        {
+        }
+
+        public Food(int iD, string name, string unit, int foodCategoryID, int price, string notes, string picture)
+        {
+            ID = iD;
+            Name = name;
+            Unit = unit;
+            FoodCategoryID = foodCategoryID;
+            Price = price;
+            Notes = notes;
+            Picture = picture;
+        }
     }
 }

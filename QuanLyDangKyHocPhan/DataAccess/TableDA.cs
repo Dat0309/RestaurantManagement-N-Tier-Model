@@ -61,5 +61,25 @@ namespace DataAccess
             return 0;
             conn.Close();
         }
+        public int TableStatus_Update(Table table)
+        {
+            SqlConnection conn = new SqlConnection(Ultilities.ConnectionString);
+            conn.Open();
+
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.CommandText = Ultilities.TableStatus_Update;
+
+            cmd.Parameters.Add("@ID", SqlDbType.Int).Value = table.Id;
+            cmd.Parameters.Add("@Status", SqlDbType.Int).Value = table.Status;
+
+            int result = cmd.ExecuteNonQuery();
+            if (result > 0)
+            {
+                return 1;
+            }
+            return 0;
+            conn.Close();
+        }
     }
 }

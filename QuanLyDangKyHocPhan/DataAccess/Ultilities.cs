@@ -30,5 +30,8 @@ namespace DataAccess
         public static string Role_InsertUpdateDelete = "Role_InsertUpdateDelete";
         public static string RoleAcc_InsertUpdateDelete = "RoleAcc_InsertUpdateDelete";
         public static string Table_InsertUpdateDelete = "Table_InsertUpdateDelete";
+
+        public static string BillsStatus_Update = "BillsStatus_Update";
+        public static string TableStatus_Update = "TableStatus_Update";
     }
 }

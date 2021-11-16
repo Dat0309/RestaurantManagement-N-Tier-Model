@@ -51,5 +51,9 @@ namespace BusenessLogic
         {
             return billDA.Insert_Update_Delete(bill, 2);
         }
+        public int UpdateStatus(Bill bill)
+        {
+            return billDA.UpdateStatus(bill);
+        }
     }
 }

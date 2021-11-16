@@ -8,16 +8,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QuanLyDangKyHocPhan.Model;
+using BusenessLogic;
+using DataAccess;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class Form1 : Form
     {
-        public delegate void SendFood(Tables table,string billId);
+        // Truyền, nhận dữ liệu từ form Table
+        public delegate void SendFood(Table table,string billId);
+        // Truyền, nhận dũe liệu từ form Food
         public delegate void ReceiveFood(Food food);
+        List<Bill> bills = new List<Bill>();
+
         private string curBill,curBillDetail;
-        private Tables curTable;
+        private Table curTable;
+
         public Form1()
         {
             InitializeComponent();
@@ -31,39 +37,24 @@ namespace QuanLyDangKyHocPhan
         #region cac ham xu ly
 
         // Click in table user control
-        private void SetValue(Tables value,string billId)
+        private void SetValue(Table value,string billId)
         {
-            this.lbNameTable.Text = "Bàn " + value.name;
+            this.lbNameTable.Text = "Bàn " + value.Name;
             this.curBill = billId;
             this.curTable = value;
         }
 
         //Create billDetail
-        private void InsertBillDetail(string billId, int foodId, int quantity)
+        private int InsertBillDetail(string billId, int foodId, int quantity)
         {
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            BillDetails bd = new BillDetails();
+            bd.Id = 0;
+            bd.InvoiceId = int.Parse(billId);
+            bd.FoodId = foodId;
+            bd.Quantity = quantity;
 
-            cmd.CommandText = "EXECUTE BillDetail_Insert @id output,@billId,@foodId,@quantity";
-
-            cmd.Parameters.Add("@id", SqlDbType.Int);
-
-            cmd.Parameters.Add("@billId", SqlDbType.Int);
-            cmd.Parameters.Add("@foodId", SqlDbType.Int);
-            cmd.Parameters.Add("@quantity", SqlDbType.Int);
-
-            cmd.Parameters["@id"].Direction = ParameterDirection.Output;
-
-            cmd.Parameters["@billId"].Value = int.Parse(billId);
-            cmd.Parameters["@foodId"].Value = foodId;
-            cmd.Parameters["@quantity"].Value=quantity;
-
-            conn.Open();
-
-            cmd.ExecuteNonQuery();
-            curBillDetail = cmd.Parameters["@id"].Value.ToString();
-            conn.Close();
+            BillDetailsBL bdBL = new BillDetailsBL();
+            return bdBL.Insert(bd);
         }
 
         // click in food control
@@ -72,51 +63,32 @@ namespace QuanLyDangKyHocPhan
 
             var item = new CustomControl.OrderControl();
 
-            InsertBillDetail(curBill, value.Id, item.GetQuantity());
-            item.initUI(value.Name, DateTime.Now.ToShortDateString(), value.Price, 1,value.Id,int.Parse(curBill),int.Parse(curBillDetail));
+            InsertBillDetail(curBill, value.ID, item.GetQuantity());
+            item.initUI(value.Name, DateTime.Now.ToShortDateString(), value.Price, 1,value.ID,int.Parse(curBill),int.Parse(curBillDetail));
             flOrder.Controls.Add(item);
         }
 
         // Update status table
-        private void UpdateStatusTable(int status)
+        private int UpdateStatusTable(int status)
         {
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            Table table = curTable;
+            table.Status = status;
+            table.Name = curTable.Name;
+            table.Capacity = curTable.Capacity;
 
-            cmd.CommandText = "EXECUTE TableStatus_Update @id,@status";
-
-            cmd.Parameters.Add("@id", SqlDbType.Int);
-            cmd.Parameters.Add("@status", SqlDbType.Int);
-
-            cmd.Parameters["@id"].Value = curTable.id;
-            cmd.Parameters["@status"].Value = status;
-
-            conn.Open();
-
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            TableBL tableBL = new TableBL();
+            return tableBL.Update(table);
         }
 
         //Update status Bills
-        private void UpdateStatusBill(bool status)
+        private int UpdateStatusBill(bool status)
         {
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            Bill bill = new Bill();
+            bill.Id = int.Parse(curBill);
+            bill.Status = status;
 
-            cmd.CommandText = "EXECUTE BillsStatus_Update @id,@status";
-
-            cmd.Parameters.Add("@id", SqlDbType.Int);
-            cmd.Parameters.Add("@status", SqlDbType.Bit);
-
-            cmd.Parameters["@id"].Value = int.Parse(curBill);
-            cmd.Parameters["@status"].Value = status;
-
-            conn.Open();
-
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            BillBL billBL = new BillBL();
+            return billBL.UpdateStatus(bill);
         }
 
         // Load Amount of Bills
@@ -127,7 +99,7 @@ namespace QuanLyDangKyHocPhan
             SqlCommand cmd = conn.CreateCommand();
 
             cmd.CommandText = "EXECUTE Amount_Update @id";
-            
+
             cmd.Parameters.Add("@id", SqlDbType.Int);
 
             cmd.Parameters["@id"].Value = curBill;
@@ -145,7 +117,7 @@ namespace QuanLyDangKyHocPhan
                 int discount = int.Parse(lbSumPrice.Text) * int.Parse(txtDiscount.Text);
                 int tax = int.Parse(lbSumPrice.Text) * int.Parse(txtTax.Text);
 
-                txtAmount.Text = (int.Parse(lbSumPrice.Text) - discount - tax).ToString();            
+                txtAmount.Text = (int.Parse(lbSumPrice.Text) - discount - tax).ToString();
             }
 
             conn.Close();
@@ -167,30 +139,19 @@ namespace QuanLyDangKyHocPhan
         // Load listTable onClick
         private void btnListTable_Click(object sender, EventArgs e)
         {
-            List<Tables> tables = new List<Tables>();
+            List<Table> tables = new List<Table>();
             flpFoodList.Controls.Clear();
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
 
-            cmd.CommandText = "SELECT * FROM [Table]";
-            conn.Open();
-
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            TableBL tableBL = new TableBL();
+            tables = tableBL.GetAll();
+            foreach (var table in tables)
             {
-                var table = new Tables((int)reader["ID"], (string)reader["Name"], (int)reader["Status"], (int)reader["Capacity"]);
-                tables.Add(table);
-
                 var item = new CustomControl.TableControll();
-                item.LoadTableName((string)reader["Name"],table);
-                item.LoadStatus((int)reader["Status"]);
+                item.LoadTableName(table.Name, table);
+                item.LoadStatus(table.Status);
 
                 flpFoodList.Controls.Add(item);
             }
-
-            conn.Close();
-
         }
 
         //Load list Food onClick
@@ -198,57 +159,32 @@ namespace QuanLyDangKyHocPhan
         {
             List<Food> foods = new List<Food>();
             flpFoodList.Controls.Clear();
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
 
-            cmd.CommandText = "SELECT * FROM Food";
-            conn.Open();
+            FoodBL foodBL = new FoodBL();
+            foods = foodBL.GetAll();
 
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            foreach (var food in foods)
             {
-                var food = new Food((int)reader["ID"], (string)reader["Name"], (string)reader["Unit"], (int)reader["FoodCategoryID"],
-                    (int)reader["Price"], (string)reader["Notes"], (string)reader["Picture"]);
-                foods.Add(food);
-
                 var item = new CustomControl.DetailFood(SetFood);
-                item.LoadFood((string)reader["Name"],(int)reader["Price"],(string)reader["Picture"],food);
+                item.LoadFood(food.Name, food.Price, food.Picture, food);
 
                 flpFoodList.Controls.Add(item);
             }
-
-            conn.Close();
         }
 
         //Chose table
         private void btnTable_Click(object sender, EventArgs e)
         {
             ResetForm();
-            List<Tables> tables = new List<Tables>();
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            List<Table> tables = new List<Table>();
 
-            cmd.CommandText = "SELECT * FROM [Table]";
-            conn.Open();
-
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                tables.Add(new Tables((int)reader["ID"], (string)reader["Name"], (int)reader["Status"], (int)reader["Capacity"]));
-
-            }
-
-            conn.Close();
+            TableBL tableBL = new TableBL();
+            tables = tableBL.GetAll();
 
             TableForm frm = new TableForm(SetValue);
             frm.initUI(tables);  
-            if (frm.ShowDialog(this) == DialogResult.OK)
-            {
-                btnListTable_Click(sender, e);
-            }
-            //frm.FormClosed += new FormClosedEventHandler(frmClosed);
+            frm.FormClosed += new FormClosedEventHandler(frmClosed);
+            frm.ShowDialog(this);
         }
 
         private void btnXuatHoaDon_Click(object sender, EventArgs e)
@@ -300,39 +236,19 @@ namespace QuanLyDangKyHocPhan
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            string search = "";
-            if(txtSearch.Text == "")
-            {
-                search = "";
-            }
-            else
-            {
-                search = " WHERE Name like '%" + txtSearch.Text + "%'";
-            }
-
             List<Food> foods = new List<Food>();
             flpFoodList.Controls.Clear();
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
 
-            cmd.CommandText = "SELECT * FROM Food" + search;
-            conn.Open();
+            FoodBL foodBL = new FoodBL();
+            foods = foodBL.Find(txtSearch.Text);
 
-            SqlDataReader reader = cmd.ExecuteReader();
-            while (reader.Read())
+            foreach (var food in foods)
             {
-                var food = new Food((int)reader["ID"], (string)reader["Name"], (string)reader["Unit"], (int)reader["FoodCategoryID"],
-                    (int)reader["Price"], (string)reader["Notes"], (string)reader["Picture"]);
-                foods.Add(food);
-
                 var item = new CustomControl.DetailFood(SetFood);
-                item.LoadFood((string)reader["Name"], (int)reader["Price"], (string)reader["Picture"], food);
+                item.LoadFood(food.Name, food.Price, food.Picture, food);
 
                 flpFoodList.Controls.Add(item);
             }
-
-            conn.Close();
         }
 
         private void frmClosed(object sender, FormClosedEventArgs e)

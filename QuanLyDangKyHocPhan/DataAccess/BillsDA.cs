@@ -48,7 +48,7 @@ namespace DataAccess
 
             SqlCommand cmd = conn.CreateCommand();
             cmd.CommandType = System.Data.CommandType.StoredProcedure;
-            cmd.CommandText = Ultilities.Category_InsertUpdateDelete;
+            cmd.CommandText = Ultilities.Bills_InsertUpdateDelete;
 
             SqlParameter IDPara = new SqlParameter("@ID", SqlDbType.Int);
             IDPara.Direction = System.Data.ParameterDirection.InputOutput;
@@ -64,6 +64,29 @@ namespace DataAccess
             cmd.Parameters.Add("@Account", SqlDbType.NVarChar, 100).Value = bill.Account;
             cmd.Parameters.Add("@Action", SqlDbType.Int)
                 .Value = action;
+
+            int result = cmd.ExecuteNonQuery();
+            if (result > 0)
+            {
+                return (int)cmd.Parameters["@ID"].Value;
+            }
+            return 0;
+
+            conn.Close();
+        }
+        public int UpdateStatus(Bill bill)
+        {
+            SqlConnection conn = new SqlConnection(Ultilities.ConnectionString);
+            conn.Open();
+
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandType = System.Data.CommandType.StoredProcedure;
+            cmd.CommandText = Ultilities.BillsStatus_Update;
+
+            SqlParameter IDPara = new SqlParameter("@ID", SqlDbType.Int);
+            IDPara.Direction = System.Data.ParameterDirection.InputOutput;
+            cmd.Parameters.Add(IDPara).Value = bill.Id;
+            cmd.Parameters.Add("@Status", SqlDbType.Bit).Value = bill.Status;
 
             int result = cmd.ExecuteNonQuery();
             if (result > 0)

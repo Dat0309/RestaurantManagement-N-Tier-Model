@@ -52,5 +52,10 @@ namespace BusenessLogic
         {
             return tableDA.Insert_Update_Delete(table, 2);
         }
+
+        public int TableStatus_Update(Table table)
+        {
+            return tableDA.TableStatus_Update(table);
+        }
     }
 }

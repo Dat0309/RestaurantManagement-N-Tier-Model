@@ -7,16 +7,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using QuanLyDangKyHocPhan.Model;
 using static QuanLyDangKyHocPhan.Form1;
+using BusenessLogic;
+using DataAccess;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class TableForm : Form
     {
-        public delegate void Load(Tables food,string billId);
+        public delegate void Load(Table food,string billId);
 
-        public Tables curTable;
+        public Table curTable;
         public SendFood send;
 
         public TableForm()
@@ -30,7 +31,7 @@ namespace QuanLyDangKyHocPhan
             this.send = sender;
         }
 
-        private void SetValue(Tables value, string billId)
+        private void SetValue(Table value, string billId)
         {
             this.curTable = value;
             this.send(curTable,billId);
@@ -38,14 +39,14 @@ namespace QuanLyDangKyHocPhan
             this.Close();
         }
 
-        public void initUI(List<Tables> tables)
+        public void initUI(List<Table> tables)
         {
-            foreach (Tables table in tables)
+            foreach (Table table in tables)
             {
                 var item = new CustomControl.TableControll(SetValue);
 
-                item.LoadTableName(table.name, table);
-                item.LoadStatus(table.status);
+                item.LoadTableName(table.Name, table);
+                item.LoadStatus(table.Status);
 
                 flpTables.Controls.Add(item);
             }

@@ -1,5 +1,4 @@
-﻿using QuanLyDangKyHocPhan.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BusenessLogic;
+using DataAccess;
 
 namespace QuanLyDangKyHocPhan.CustomControl
 {
@@ -26,32 +27,15 @@ namespace QuanLyDangKyHocPhan.CustomControl
 
         }
 
-        private void UpDateBillDetail(int quantity)
+        private int UpDateBillDetail(int quantity)
         {
-            try
-            {
-                string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection conn = new SqlConnection(connString);
-                SqlCommand cmd = conn.CreateCommand();
+            BillDetails billDetails = new BillDetails();
+            billDetails.Id = billDetailId;
+            billDetails.InvoiceId = billId;
+            billDetails.Quantity = quantity;
 
-                cmd.CommandText = "EXECUTE BillDetail_Update @id,@billId,@quantity";
-
-                cmd.Parameters.Add("@id", SqlDbType.Int);
-                cmd.Parameters.Add("@billId", SqlDbType.Int);
-                cmd.Parameters.Add("@quantity", SqlDbType.Int);
-
-                cmd.Parameters["@id"].Value = billDetailId;
-                cmd.Parameters["@billId"].Value = billId;
-                cmd.Parameters["@quantity"].Value = quantity;
-
-                conn.Open();
-
-                var numEffect = cmd.ExecuteNonQuery();
-                conn.Close();
-            }catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "SQL Error");
-            }
+            BillDetailsBL bdBL = new BillDetailsBL();
+            return bdBL.Update(billDetails);
         }
 
         public int GetQuantity()
