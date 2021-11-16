@@ -60,3 +60,7 @@ E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPha
 E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\obj\Debug\RestaurantManagement.csproj.CopyComplete
 E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\obj\Debug\QuanLyDangKyHocPhan.exe
 E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\obj\Debug\QuanLyDangKyHocPhan.pdb
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\bin\Debug\BusenessLogic.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\bin\Debug\DataAccess.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\bin\Debug\BusenessLogic.pdb
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\bin\Debug\DataAccess.pdb

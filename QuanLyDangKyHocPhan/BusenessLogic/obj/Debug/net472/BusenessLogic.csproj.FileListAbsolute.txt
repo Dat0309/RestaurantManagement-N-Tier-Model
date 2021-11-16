@@ -1,0 +1,17 @@
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\BusenessLogic.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\BusenessLogic.pdb
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\System.Configuration.ConfigurationManager.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\System.Data.SqlClient.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\System.Security.AccessControl.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\System.Security.Permissions.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\System.Security.Principal.Windows.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\DataAccess.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net472\DataAccess.pdb
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.csproj.AssemblyReference.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.GeneratedMSBuildEditorConfig.editorconfig
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.AssemblyInfoInputs.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.AssemblyInfo.cs
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.csproj.CoreCompileInputs.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.csproj.CopyComplete
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net472\BusenessLogic.pdb

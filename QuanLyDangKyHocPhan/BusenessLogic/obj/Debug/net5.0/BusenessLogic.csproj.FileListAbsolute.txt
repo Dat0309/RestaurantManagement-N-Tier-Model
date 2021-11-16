@@ -1,0 +1,15 @@
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net5.0\BusenessLogic.deps.json
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net5.0\BusenessLogic.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net5.0\ref\BusenessLogic.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net5.0\BusenessLogic.pdb
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net5.0\DataAccess.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\bin\Debug\net5.0\DataAccess.pdb
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.csproj.AssemblyReference.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.GeneratedMSBuildEditorConfig.editorconfig
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.AssemblyInfoInputs.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.AssemblyInfo.cs
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.csproj.CoreCompileInputs.cache
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.csproj.CopyComplete
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\ref\BusenessLogic.dll
+E:\NAM3\RestaurantManagement-N-Tier-Model\QuanLyDangKyHocPhan\BusenessLogic\obj\Debug\net5.0\BusenessLogic.pdb
