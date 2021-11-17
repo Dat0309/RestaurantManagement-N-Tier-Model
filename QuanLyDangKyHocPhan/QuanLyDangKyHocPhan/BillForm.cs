@@ -8,11 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class BillForm : Form
     {
+        List<Bill> bills = new List<Bill>();
         private int tableId;
         private string billId;
         public BillForm()
@@ -25,61 +28,35 @@ namespace QuanLyDangKyHocPhan
 
         }
 
-        private void UpdateStatusTable(int status)
+        private int UpdateStatusTable(int status)
         {
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            TableBL tableBL = new TableBL();
+            Table table = tableBL.GetByID(tableId);
+            table.Id = tableId;
+            table.Status = status;
 
-            cmd.CommandText = "EXECUTE TableStatus_Update @id,@status";
-
-            cmd.Parameters.Add("@id", SqlDbType.Int);
-            cmd.Parameters.Add("@status", SqlDbType.Int);
-
-            cmd.Parameters["@id"].Value = tableId;
-            cmd.Parameters["@status"].Value = status;
-
-            conn.Open();
-
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            return tableBL.TableStatus_Update(table);
         }
 
         //Update status Bills
-        private void UpdateStatusBill(bool status)
+        private int UpdateStatusBill(bool status)
         {
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            Bill bill = new Bill();
+            bill.Id = int.Parse(billId);
+            bill.Status = status;
 
-            cmd.CommandText = "EXECUTE BillsStatus_Update @id,@status";
-
-            cmd.Parameters.Add("@id", SqlDbType.Int);
-            cmd.Parameters.Add("@status", SqlDbType.Bit);
-
-            cmd.Parameters["@id"].Value = billId;
-            cmd.Parameters["@status"].Value = status;
-
-            conn.Open();
-
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            BillBL billBL = new BillBL();
+            return billBL.UpdateStatus(bill);
         }
         public void LoadBills(int tableId)
         {
             dgvBills.Columns.Clear();
             this.tableId = tableId;
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
+            
+            BillBL billBL = new BillBL();
+            bills = billBL.GetByIDTable(tableId);
 
-            cmd.CommandText = $"Select * from bills where TableID = {tableId}";
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            conn.Open();
-
-            adapter.Fill(dt);
-            dgvBills.DataSource = dt;
+            dgvBills.DataSource = bills;
             dgvBills.Columns[0].ReadOnly = true;
 
             dgvBills.Columns[0].HeaderText = "Mã hoá đơn";
@@ -92,7 +69,7 @@ namespace QuanLyDangKyHocPhan
             dgvBills.Columns[0].HeaderText = "Ngày nhập";
             dgvBills.Columns[0].HeaderText = "Nhân viên";
 
-            conn.Close();
+            //conn.Close();
         }
 
         private void dgvBills_DoubleClick(object sender, EventArgs e)

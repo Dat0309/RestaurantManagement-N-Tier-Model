@@ -25,6 +25,20 @@ namespace BusenessLogic
             return null;
         }
 
+        public List<Bill> GetByIDTable(int ID)
+        {
+            List<Bill> list = GetAll();
+            List<Bill> result = new List<Bill>();
+            foreach(var item in list)
+            {
+                if(item.TableId == ID)
+                {
+                    result.Add(item);
+                }
+            }
+            return result;
+        }
+
         public List<Bill> Find(string key)
         {
             List<Bill> bills = GetAll();

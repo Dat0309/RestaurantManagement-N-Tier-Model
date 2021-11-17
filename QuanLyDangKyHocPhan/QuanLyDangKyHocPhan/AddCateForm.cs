@@ -8,57 +8,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class AddCateForm : Form
     {
+
         public AddCateForm()
         {
             InitializeComponent();
         }
 
+        private int InsertCate()
+        {
+            Category cate = new Category();
+            cate.ID = 0;
+            cate.Name = txtNameCat.Text;
+            cate.Type = int.Parse(cbbType.Text == "Đồ ăn" ? "1" : "0");
+
+            CategoryBL catBL = new CategoryBL();
+            return catBL.Insert(cate);
+        }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            try
+            int reslut = InsertCate();
+            if(reslut > 0)
             {
-                string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection conn = new SqlConnection(connString);
-
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "EXECUTE Category_Insert @id output, @name, @type";
-
-                cmd.Parameters.Add("@id", SqlDbType.Int);
-                cmd.Parameters.Add("@name", SqlDbType.NVarChar, 1000);
-                cmd.Parameters.Add("@type", SqlDbType.Int);
-
-                cmd.Parameters["@id"].Direction = ParameterDirection.Output;
-                cmd.Parameters["@name"].Value = txtNameCat.Text;
-                cmd.Parameters["@type"].Value = cbbType.Text;
-
-                conn.Open();
-
-                int numRow = cmd.ExecuteNonQuery();
-
-                if (numRow > 0)
-                {
-                    var catID = cmd.Parameters["@id"].Value.ToString();
-                    MessageBox.Show("Successfully adding new category. Category ID " + catID, "Message");
-                    this.ResetText();
-                }
-                else
-                {
-                    MessageBox.Show("Adding category failed");
-                }
-
-                conn.Close();
-                conn.Dispose();
-                this.Close();
+                MessageBox.Show("Them du lieu hanh cong");
+                this.ResetText();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Sql Error");
-            }
+            MessageBox.Show("Adding category failed");
         }
 
         private void ResetText()

@@ -9,31 +9,38 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BusenessLogic;
-using DataAccess;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class AccountForm : Form
     {
-        List<Account> accounts = new List<Account>();
-        Account curAcc = new Account();
         public AccountForm()
         {
             InitializeComponent();
         }
         private void LoadAccount()
         {
-            AccountBL accountBL = new AccountBL();
-            accounts = accountBL.GetAll();
+            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
+            SqlConnection conn = new SqlConnection(connString);
 
-            dgvAccount.DataSource = accounts;
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * from Account";
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+
+            conn.Open();
+
+            adapter.Fill(dt);
+            dgvAccount.DataSource = dt;
             dgvAccount.Columns[0].ReadOnly = true;
             VietSub();
+
             for (int i = 0; i < dgvAccount.RowCount - 1; i++)
             {
                 MahoaMD5(dgvAccount.Rows[i].Cells["Password"].Value.ToString(), i);
             }
+
+            conn.Close();
         }
 
         private void MahoaMD5(string pass, int index)
@@ -57,7 +64,6 @@ namespace QuanLyDangKyHocPhan
         private void dgvAccount_Click(object sender, EventArgs e)
         {
             int index = dgvAccount.CurrentRow.Index;
-            curAcc = accounts[index];
             if (index != null)
             {
                 txtAccountName.Text = dgvAccount.Rows[index].Cells["AccountName"].Value.ToString();
@@ -80,74 +86,113 @@ namespace QuanLyDangKyHocPhan
             btnUpdate.Enabled = false;
         }
 
-        private int InsertAccount()
-        {
-            if (Validation())
-            {
-                Account account = new Account();
-                account.AccountName = txtAccountName.Text;
-                account.Password = txtPass.Text;
-                account.FullName = txtFullName.Text;
-                account.Email = txtEmail.Text;
-                account.Tell = mtbPhone.Text;
-                account.DateCreate = DateTime.Now;
-
-                AccountBL accountBL = new AccountBL();
-                return accountBL.Insert(account);
-            }
-            else
-            {
-                MessageBox.Show("Loi", "Vui lòng điền đủ thông tin", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                return -1;
-            }
-        }
-
-        private int UpdateAccount()
-        {
-            if (Validation())
-            {
-                Account acc = curAcc;
-                acc.AccountName = txtAccountName.Text;
-                acc.Password = txtPass.Text;
-                acc.Tell = mtbPhone.Text;
-                acc.Email = txtEmail.Text;
-                acc.FullName = txtFullName.Text;
-                acc.DateCreate = DateTime.Now;
-
-                AccountBL accBL = new AccountBL();
-                return accBL.Update(acc);
-            }
-            else
-            {
-                MessageBox.Show("Loi", "Vui lòng điền đủ thông tin", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                return -1;
-            }
-
-        }
-
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            int result = InsertAccount();
-            if(result > 0)
+            if (Validation())
             {
-                MessageBox.Show("Them du lieu hanh cong");
-                LoadAccount();
-                ResetForm();
+                try
+                {
+                    string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
+                    SqlConnection conn = new SqlConnection(connString);
+
+                    SqlCommand cmd = conn.CreateCommand();
+                    cmd.CommandText = "EXECUTE Account_Insert @account,@pass,@fullname,@email,@tell,@date";
+
+                    cmd.Parameters.Add("@account", SqlDbType.NVarChar, 100);
+                    cmd.Parameters.Add("@pass", SqlDbType.NVarChar, 200);
+                    cmd.Parameters.Add("@fullname", SqlDbType.NVarChar, 1000);
+                    cmd.Parameters.Add("@email", SqlDbType.NVarChar, 1000);
+                    cmd.Parameters.Add("@tell", SqlDbType.NVarChar, 200);
+                    cmd.Parameters.Add("@date", SqlDbType.SmallDateTime);
+
+                    cmd.Parameters["@account"].Value = txtAccountName.Text;
+                    cmd.Parameters["@pass"].Value = txtPass.Text;
+                    cmd.Parameters["@fullname"].Value = txtFullName.Text;
+                    cmd.Parameters["@email"].Value = txtEmail.Text;
+                    cmd.Parameters["@tell"].Value = mtbPhone.Text;
+                    cmd.Parameters["@date"].Value = DateTime.Now.ToShortDateString();
+
+                    conn.Open();
+
+                    int numOfRows = cmd.ExecuteNonQuery();
+
+                    if (numOfRows == 1)
+                    {
+                        LoadAccount();
+                        ResetForm();
+                        MessageBox.Show("Them tai khoan thanh cong");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Loi", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    }
+
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "SQL Error");
+                }
             }
-            else MessageBox.Show("Loi", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            else
+            {
+                MessageBox.Show("Loi", "Vui lòng điền đủ thông tin", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            }
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            int result = UpdateAccount();
-            if (result > 0)
+            if (Validation())
             {
-                LoadAccount();
-                ResetForm();
-                MessageBox.Show("Cap nhat tai khoan thanh cong");
+                try
+                {
+                    string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
+                    SqlConnection conn = new SqlConnection(connString);
+
+                    SqlCommand cmd = conn.CreateCommand();
+                    cmd.CommandText = "EXECUTE Account_Update @account,@pass,@fullname,@email,@tell,@date";
+
+                    cmd.Parameters.Add("@account", SqlDbType.NVarChar, 100);
+                    cmd.Parameters.Add("@pass", SqlDbType.NVarChar, 200);
+                    cmd.Parameters.Add("@fullname", SqlDbType.NVarChar, 1000);
+                    cmd.Parameters.Add("@email", SqlDbType.NVarChar, 1000);
+                    cmd.Parameters.Add("@tell", SqlDbType.NVarChar, 200);
+                    cmd.Parameters.Add("@date", SqlDbType.SmallDateTime);
+
+                    cmd.Parameters["@account"].Value = txtAccountName.Text;
+                    cmd.Parameters["@pass"].Value = txtPass.Text;
+                    cmd.Parameters["@fullname"].Value = txtFullName.Text;
+                    cmd.Parameters["@email"].Value = txtEmail.Text;
+                    cmd.Parameters["@tell"].Value = mtbPhone.Text;
+                    cmd.Parameters["@date"].Value = DateTime.Now.ToShortDateString();
+
+                    conn.Open();
+
+                    int numOfRows = cmd.ExecuteNonQuery();
+
+                    if (numOfRows == 1)
+                    {
+                        LoadAccount();
+                        ResetForm();
+                        MessageBox.Show("Cap nhat tai khoan thanh cong");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Loi", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                    }
+
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "SQL Error");
+                }
+
             }
-            else MessageBox.Show("Cap nhat du lieu khong thanh cong. vVui long kiem tra lai du lieu nhap");
-            
+            else
+            {
+                MessageBox.Show("Loi", "Vui lòng điền đủ thông tin", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            }
         }
 
         private void dgvAccount_DoubleClick(object sender, EventArgs e)

@@ -8,11 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class BillDetailForm : Form
     {
+        List<BillDetails> billDetailsList = new List<BillDetails>();
         public BillDetailForm()
         {
             InitializeComponent();
@@ -20,37 +23,15 @@ namespace QuanLyDangKyHocPhan
 
         public void LoadDetail(string billID)
         {
-            try
-            {
-                string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection conn = new SqlConnection(connString);
+            BillDetailsBL bdBL = new BillDetailsBL();
+            billDetailsList = bdBL.GetAll();
 
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "EXECUTE BillDetail_GetById @id";
+            dgvDetailBill.DataSource = billDetailsList;
+            dgvDetailBill.Columns[0].ReadOnly = true;
 
-                cmd.Parameters.Add("@id", SqlDbType.Int);
-                cmd.Parameters["@id"].Value = billID;
-
-                SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                DataTable dt = new DataTable();
-
-                conn.Open();
-
-                adapter.Fill(dt);
-                dgvDetailBill.DataSource = dt;
-                dgvDetailBill.Columns[0].ReadOnly = true;
-
-                dgvDetailBill.Columns[0].HeaderText = "Mã";
-                dgvDetailBill.Columns[1].HeaderText = "Tên món ăn";
-                dgvDetailBill.Columns[2].HeaderText = "Số lượng";
-                
-
-                conn.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "SQL Error");
-            }
+            dgvDetailBill.Columns[0].HeaderText = "Mã";
+            dgvDetailBill.Columns[1].HeaderText = "Tên món ăn";
+            dgvDetailBill.Columns[2].HeaderText = "Số lượng";
         }
     }
 }
