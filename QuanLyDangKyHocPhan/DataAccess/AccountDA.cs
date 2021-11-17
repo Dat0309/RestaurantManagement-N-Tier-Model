@@ -29,7 +29,8 @@ namespace DataAccess
                 account.FullName = reader["FullName"].ToString();
                 account.Email = reader["Email"].ToString();
                 account.Tell = reader["Tell"].ToString();
-                account.DateCreate = DateTime.Parse(reader["DateCreated"].ToString());
+                account.DateCreate = reader["DateCreated"].ToString() == null ? DateTime.Parse((reader["DateCreated"].ToString())).ToShortDateString() :
+                    (reader["DateCreated"].ToString());
             }
 
             conn.Close();

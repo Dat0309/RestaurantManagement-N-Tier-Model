@@ -13,6 +13,6 @@ namespace DataAccess
         public string FullName { get; set; }
         public string Email { get; set; }
         public string Tell { get; set; }
-        public DateTime DateCreate { get; set; }
+        public string DateCreate { get; set; }
     }
 }

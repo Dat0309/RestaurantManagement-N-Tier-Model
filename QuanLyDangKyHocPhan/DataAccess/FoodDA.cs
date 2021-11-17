@@ -30,6 +30,7 @@ namespace DataAccess
                 food.FoodCategoryID = Convert.ToInt32(reader["FoodCategoryID"]);
                 food.Price = Convert.ToInt32(reader["Price"]);
                 food.Notes = reader["Notes"].ToString();
+                food.Picture = reader["Picture"].ToString();
                 list.Add(food);
             }
             conn.Close();
@@ -58,6 +59,8 @@ namespace DataAccess
                 .Value = food.Price;
             cmd.Parameters.Add("@Notes", SqlDbType.NVarChar, 3000)
                 .Value = food.Notes;
+            cmd.Parameters.Add("@Pic", SqlDbType.NVarChar, 3000)
+                .Value = food.Picture;
             cmd.Parameters.Add("@Action", SqlDbType.Int)
                 .Value = action;
 

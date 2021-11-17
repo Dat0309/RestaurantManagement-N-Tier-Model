@@ -8,11 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class BillOrderForm : Form
     {
+        List<Bill> bills = new List<Bill>();
         public BillOrderForm()
         {
             InitializeComponent();
@@ -20,17 +23,9 @@ namespace QuanLyDangKyHocPhan
         public void LoadBills()
         {
             dgvBills.Columns.Clear();
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-            SqlCommand cmd = conn.CreateCommand();
-
-            cmd.CommandText = $"Select * from bills";
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-            DataTable dt = new DataTable();
-            conn.Open();
-
-            adapter.Fill(dt);
-            dgvBills.DataSource = dt;
+            BillBL billBL = new BillBL();
+            bills = billBL.GetAll();
+            dgvBills.DataSource = bills;
             dgvBills.Columns[0].ReadOnly = true;
 
             dgvBills.Columns[0].HeaderText = "Mã hoá đơn";
@@ -42,8 +37,6 @@ namespace QuanLyDangKyHocPhan
             dgvBills.Columns[6].HeaderText = "Thanh toán";
             dgvBills.Columns[7].HeaderText = "Ngày nhập";
             dgvBills.Columns[8].HeaderText = "Nhân viên";
-
-            conn.Close();
         }
 
         private void btnXuatHoaDon_Click(object sender, EventArgs e)

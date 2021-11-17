@@ -8,12 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class FoodInfoForm : Form
     {
         DataTable foodTb;
+        List<Food> foods = new List<Food>();
         public FoodInfoForm()
         {
             InitializeComponent();
@@ -47,37 +50,21 @@ namespace QuanLyDangKyHocPhan
         private void cbbCategory_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (cbbCategory.SelectedIndex == -1) return;
-            string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection conn = new SqlConnection(connString);
-
-            SqlCommand cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM Food Where FoodCategoryID = @categoryId";
-
-            cmd.Parameters.Add("@categoryId", SqlDbType.Int);
+            FoodBL foodBL = new FoodBL();
             if (cbbCategory.SelectedValue is DataRowView)
             {
                 DataRowView rowView = cbbCategory.SelectedValue as DataRowView;
-                cmd.Parameters["@categoryId"].Value = rowView["ID"];
+                foods = foodBL.GetByCateID(int.Parse(rowView["ID"].ToString()));
             }
             else
             {
-                cmd.Parameters["@categoryId"].Value = cbbCategory.SelectedValue;
+                foods = foodBL.GetByCateID(int.Parse(cbbCategory.SelectedValue.ToString()));
             }
+            
 
-            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-            foodTb = new DataTable();
-
-            conn.Open();
-
-            adapter.Fill(foodTb);
-
-            conn.Close();
-            conn.Dispose();
-
-            dgvFoodList.DataSource = foodTb;
+            dgvFoodList.DataSource = foods;
 
             dgvFoodList.Columns[0].ReadOnly = true;
-
 
             dgvFoodList.Columns[0].HeaderText = "Mã món ăn";
             dgvFoodList.Columns[1].HeaderText = "Tên món";
@@ -88,7 +75,7 @@ namespace QuanLyDangKyHocPhan
             dgvFoodList.Columns[6].HeaderText = "Hình ảnh";
 
             lbCatName.Text = cbbCategory.Text;
-            lbQuantity.Text = foodTb.Rows.Count.ToString();
+            lbQuantity.Text = foods.Count.ToString();
         }
 
         private void tsmCalculateQuantuty_Click(object sender, EventArgs e)

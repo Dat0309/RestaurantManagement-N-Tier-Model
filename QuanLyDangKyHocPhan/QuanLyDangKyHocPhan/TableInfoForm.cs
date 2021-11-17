@@ -8,11 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan
 {
     public partial class TableInfoForm : Form
     {
+        List<Table> tables = new List<Table>();
+        Table curTable = new Table();
         public TableInfoForm()
         {
             InitializeComponent();
@@ -20,29 +24,15 @@ namespace QuanLyDangKyHocPhan
 
         public void LoadTable()
         {
-            string connectionString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-            SqlConnection sqlConnection = new SqlConnection(connectionString);
-            SqlCommand sqlCommand = sqlConnection.CreateCommand();
+            TableBL tableBL = new TableBL();
+            tables = tableBL.GetAll();
 
-            string query = "SELECT * FROM [TABLE]";
-
-            sqlConnection.Open();
-            sqlCommand.CommandText = query;
-            sqlCommand.ExecuteNonQuery();
-            this.Text = "Danh sach tat ca cac ban";
-            SqlDataAdapter adapter = new SqlDataAdapter(sqlCommand);
-            DataTable dt = new DataTable("Table");
-            adapter.Fill(dt);
-
-            dgvTable.DataSource = dt;
+            dgvTable.DataSource = tables;
             dgvTable.Columns[0].ReadOnly = true;
             dgvTable.Columns[0].HeaderText = "Mã bàn";
             dgvTable.Columns[1].HeaderText = "Tên bàn";
             dgvTable.Columns[2].HeaderText = "Tình trạng";
             dgvTable.Columns[3].HeaderText = "Số chỗ";
-
-            sqlConnection.Close();
-            adapter.Dispose();
         }
 
         private bool Validation()
@@ -61,130 +51,82 @@ namespace QuanLyDangKyHocPhan
             btnUpdate.Enabled = false;
         }
 
-        private void btnAdd_Click(object sender, EventArgs e)
+        private int InsertTable()
         {
             if (Validation())
             {
-                string connectionString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection connection = new SqlConnection(connectionString);
-                SqlCommand command = connection.CreateCommand();
+                Table table = new Table();
+                table.Id = 0;
+                table.Name = txtName.Text;
+                table.Status = int.Parse(cbbStatus.Text == "Trống" ? "0" : "1");
+                table.Capacity = int.Parse(txtCapacity.Text);
 
-                connection.Open();
+                TableBL tableBL = new TableBL();
+                return tableBL.Insert(table);
+            }
+            return -1;
+        }
 
-                command.CommandText = "SELECT Name FROM [Table] WHERE Name = '" + txtName.Text + "'";
-                var check = command.ExecuteScalar();
+        private int UpdateTable()
+        {
+            if (Validation())
+            {
+                Table table = curTable;
+                table.Name = txtName.Text;
+                table.Status = int.Parse(cbbStatus.Text == "Trống" ? "0" : "1");
+                table.Capacity = int.Parse(txtCapacity.Text);
 
-                if (check == null)
-                {
-                    command.CommandText = string.Format("insert into [Table](Name, Status, Capacity) values (N'{0}', {1}, {2})",
-                        txtName.Text, cbbStatus.Text == "Trống" ? "0" : "1", txtCapacity.Text);
+                TableBL tableBL = new TableBL();
+                return tableBL.Update(table);
 
-                    int numOfRows = command.ExecuteNonQuery();
-                    if (numOfRows == 1)
-                    {
-                        LoadTable();
-                        ResetForm();
-                        MessageBox.Show("Them tai khoan moi thanh cong");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Loi");
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("ban da ton tai, xin thu lai");
-                }
-                connection.Close();
+            }
+            return -1;
+        }
+
+        private void btnAdd_Click(object sender, EventArgs e)
+        {
+            int result = InsertTable();
+            if (result > 0)
+            {
+                LoadTable();
+                ResetForm();
+                MessageBox.Show("Them tai khoan moi thanh cong");
             }
             else
+            {
                 MessageBox.Show("Vui long nhap day du thong tin", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            }
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            if (Validation())
+            int result = UpdateTable();
+            if (result > 0)
             {
-                string connectionString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection sqlConn = new SqlConnection(connectionString);
-                SqlCommand sqlComd = sqlConn.CreateCommand();
-                string id = dgvTable.SelectedRows[0].Cells[0].Value.ToString();
-                sqlConn.Open();
-
-                sqlComd.CommandText = "SELECT Name FROM [Table] WHERE Name = '" + txtName.Text + "'";
-                var check = sqlComd.ExecuteScalar();
-
-                if (check == null)
-                {
-
-                    sqlComd.CommandText = string.Format("UPDATE [Table] SET Name = N'{0}', Status = {1}, Capacity = {2} WHERE ID = {3} ",
-                        txtName.Text, cbbStatus.Text == "Trống" ? "0" : "1", txtCapacity.Text, id);
-
-
-                    int numOfRows = sqlComd.ExecuteNonQuery();
-
-                    if (numOfRows == 1)
-                    {
-                        LoadTable();
-                        ResetForm();
-                        MessageBox.Show("Cap nhat ban thanh cong");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Loi", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("ban da ton tai, xin thu lai");
-                }
-                sqlConn.Close();
+                MessageBox.Show("Cap nhat du lieu thanh cong");
+                LoadTable();
+                ResetForm();
             }
-            else
-            {
-                MessageBox.Show("Vui long nhap day du thong tin", "Error", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-            }
+            else MessageBox.Show("Cap nhat du lieu khong thanh cong. vVui long kiem tra lai du lieu nhap");
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (dgvTable.SelectedRows.Count == 0) return;
-                var rowSelect = dgvTable.SelectedRows[0];
-                string id = dgvTable.SelectedRows[0].Cells[0].Value.ToString();
+            if (dgvTable.SelectedRows.Count == 0) return;
+            var rowSelect = dgvTable.SelectedRows[0];
+            TableBL tableBL = new TableBL();
+            tableBL.Delete(curTable);
 
-                string connectionString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection sqlConn = new SqlConnection(connectionString);
-                SqlCommand sqlComd = sqlConn.CreateCommand();
-
-                string query = string.Format("Delete from Bills Where TableID = {0}", id);
-                sqlComd.CommandText = query;
-
-                sqlConn.Open();
-
-                sqlComd.ExecuteNonQuery();
-
-                sqlComd.CommandText = "Delete from [Table] WHERE ID = " + id;
-                sqlComd.ExecuteNonQuery();
-
-                dgvTable.Rows.Remove(rowSelect);
-                LoadTable();
-                ResetForm();
-                MessageBox.Show("Da xoa thanh cong");
-
-                sqlConn.Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Sql Error");
-            }
+            dgvTable.Rows.Remove(rowSelect);
+            LoadTable();
+            ResetForm();
+            MessageBox.Show("Da xoa thanh cong");
         }
 
         private void dgvTable_Click(object sender, EventArgs e)
         {
             int index = dgvTable.CurrentRow.Index;
-
+            curTable = tables[index];
             txtName.Text = dgvTable.Rows[index].Cells["Name"].Value.ToString();
             cbbStatus.Text = dgvTable.Rows[index].Cells["Status"].Value.ToString() == "0" ? "Trống" : "Có người";
             txtCapacity.Text = dgvTable.Rows[index].Cells["Capacity"].Value.ToString();

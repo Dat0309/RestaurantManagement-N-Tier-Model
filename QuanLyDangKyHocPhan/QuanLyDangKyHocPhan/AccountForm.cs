@@ -90,7 +90,7 @@ namespace QuanLyDangKyHocPhan
                 account.FullName = txtFullName.Text;
                 account.Email = txtEmail.Text;
                 account.Tell = mtbPhone.Text;
-                account.DateCreate = DateTime.Now;
+                account.DateCreate = DateTime.Now.ToShortDateString();
 
                 AccountBL accountBL = new AccountBL();
                 return accountBL.Insert(account);
@@ -112,7 +112,7 @@ namespace QuanLyDangKyHocPhan
                 acc.Tell = mtbPhone.Text;
                 acc.Email = txtEmail.Text;
                 acc.FullName = txtFullName.Text;
-                acc.DateCreate = DateTime.Now;
+                acc.DateCreate = DateTime.Now.ToShortDateString();
 
                 AccountBL accBL = new AccountBL();
                 return accBL.Update(acc);

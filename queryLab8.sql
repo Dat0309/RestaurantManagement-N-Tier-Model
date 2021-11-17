@@ -70,6 +70,7 @@ as
 	--drop procedure Category_InsertUpdateDelete
 -------------------------
 --ad, delete, update food
+drop procedure Food_InsertUpdateDelete
 create procedure Food_InsertUpdateDelete
 @ID int output,
 @Name nvarchar(1000),
@@ -77,19 +78,20 @@ create procedure Food_InsertUpdateDelete
 @FoodCategoryID int,
 @Price int,
 @Notes nvarchar(3000),
+@Pic nvarchar(3000),
 @Action int
 AS
 	IF @Action = 0 -- Nếu Action = 0, thêm dữ liệu
 	BEGIN
 		INSERT INTO [Food] ([Name],[Unit],[FoodCategoryID],[Price],[Notes],[Picture])
-		VALUES (@Name, @Unit,@FoodCategoryID,@Price,@Notes,'E:\NAM3\Restaurant-Managerment-Winform-C-\QuanLyDangKyHocPhan\QuanLyDangKyHocPhan\Resources\food.png')
+		VALUES (@Name, @Unit,@FoodCategoryID,@Price,@Notes,@Pic)
 		SET @ID = @@identity -- Thiết lập ID tự tăng
 	END
 	ELSE IF @Action = 1 -- Nếu Action = 1, cập nhật dữ liệu
 	BEGIN
 		UPDATE [Food]
 		SET [Name] = @Name,[Unit]=@Unit,[FoodCategoryID]=@FoodCategoryID,
-		[Price]=@Price,[Notes]=@Notes
+		[Price]=@Price,[Notes]=@Notes, [Picture] = @Pic
 		WHERE [ID] = @ID
 	END
 	ELSE IF @Action = 2 -- Nếu Action = 2, xóa dữ liệu

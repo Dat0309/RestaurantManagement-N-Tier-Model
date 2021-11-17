@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DataAccess;
+using BusenessLogic;
 
 namespace QuanLyDangKyHocPhan
 {
@@ -92,102 +94,59 @@ namespace QuanLyDangKyHocPhan
             }
         }
 
+        private int InsertFood()
+        {
+            string defaultPhoto = "E:\\NAM3\\Restaurant - Managerment - Winform - C -\\QuanLyDangKyHocPhan\\QuanLyDangKyHocPhan\\Resources\\food.png";
+            Food food = new Food();
+
+            food.ID = 0;
+            food.Name = txtName.Text;
+            food.Unit = txtUnit.Text;
+            food.FoodCategoryID = int.Parse(cbbCate.SelectedValue.ToString());
+            food.Price = int.Parse(nmrPrice.Value.ToString());
+            food.Notes = txtNotes.Text;
+            food.Picture = txtPhoto.Text == "" ? defaultPhoto : txtPhoto.Text;
+
+            FoodBL foodBL = new FoodBL();
+            return foodBL.Insert(food);
+        }
+
+        private int UpdateFood()
+        {
+            string defaultPhoto = "E:\\NAM3\\Restaurant - Managerment - Winform - C -\\QuanLyDangKyHocPhan\\QuanLyDangKyHocPhan\\Resources\\food.png";
+            Food food = new Food();
+            food.ID = int.Parse(txtID.Text);
+            food.Name = txtName.Text;
+            food.Unit = txtUnit.Text;
+            food.FoodCategoryID = int.Parse(cbbCate.SelectedValue.ToString());
+            food.Price = int.Parse(nmrPrice.Value.ToString());
+            food.Notes = txtNotes.Text;
+            food.Picture = txtPhoto.Text == "" ? defaultPhoto : txtPhoto.Text;
+
+            FoodBL foodBL = new FoodBL();
+            return foodBL.Update(food);
+        }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            try
+            int result = InsertFood();
+            if (result > 0)
             {
-                string defaultPhoto = "E:\\NAM3\\Restaurant - Managerment - Winform - C -\\QuanLyDangKyHocPhan\\QuanLyDangKyHocPhan\\Resources\\food.png";
-                string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection conn = new SqlConnection(connString);
-
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "EXECUTE InsertFood @id output, @name, @unit, @foodCategoryID, @price, @notes, @pic";
-
-                cmd.Parameters.Add("@id", SqlDbType.Int);
-                cmd.Parameters.Add("@name", SqlDbType.NVarChar, 3000);
-                cmd.Parameters.Add("@unit", SqlDbType.NVarChar, 3000);
-                cmd.Parameters.Add("@foodCategoryID", SqlDbType.Int);
-                cmd.Parameters.Add("@price", SqlDbType.Int);
-                cmd.Parameters.Add("@notes", SqlDbType.NVarChar, 3000);
-                cmd.Parameters.Add("@pic", SqlDbType.NVarChar, 3000);
-
-                cmd.Parameters["@id"].Direction = ParameterDirection.Output;
-
-                cmd.Parameters["@name"].Value = txtName.Text;
-                cmd.Parameters["@unit"].Value = txtUnit.Text;
-                cmd.Parameters["@foodCategoryID"].Value = cbbCate.SelectedValue;
-                cmd.Parameters["@price"].Value = nmrPrice.Text;
-                cmd.Parameters["@notes"].Value = txtNotes.Text;
-                cmd.Parameters["@pic"].Value = txtPhoto.Text == ""? defaultPhoto:txtPhoto.Text;
-
-                conn.Open();
-
-                int numRow = cmd.ExecuteNonQuery();
-
-                if (numRow > 0)
-                {
-                    var foodID = cmd.Parameters["@id"].Value.ToString();
-                    MessageBox.Show("Successfully adding new food. Food ID = " + foodID, "Message");
-                    this.ResetText();
-                }
-                else
-                {
-                    MessageBox.Show("Adding food failed");
-                }
-
-                conn.Close();
-                conn.Dispose();
+                MessageBox.Show("Them du lieu hanh cong");
+                this.ResetText();
             }
-            catch (SqlException ex)
-            {
-                MessageBox.Show(ex.Message, "SQL Error");
-            }
+            else MessageBox.Show("Them du lieu khong thanh cong. Vui long kiem tra lai du lieu nhap");
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            try
+            int result = UpdateFood();
+            if (result > 0)
             {
-                string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
-                SqlConnection conn = new SqlConnection(connString);
-
-                SqlCommand cmd = conn.CreateCommand();
-                cmd.CommandText = "EXECUTE aUpdateFood @id, @name, @unit, @foodCategoryID, @price, @notes";
-
-                cmd.Parameters.Add("@id", SqlDbType.Int);
-                cmd.Parameters.Add("@name", SqlDbType.NVarChar, 3000);
-                cmd.Parameters.Add("@unit", SqlDbType.NVarChar, 3000);
-                cmd.Parameters.Add("@foodCategoryID", SqlDbType.Int);
-                cmd.Parameters.Add("@price", SqlDbType.Int);
-                cmd.Parameters.Add("@notes", SqlDbType.NVarChar, 3000);
-
-                cmd.Parameters["@id"].Value = int.Parse(txtID.Text);
-                cmd.Parameters["@name"].Value = txtName.Text;
-                cmd.Parameters["@unit"].Value = txtUnit.Text;
-                cmd.Parameters["@foodCategoryID"].Value = cbbCate.SelectedValue;
-                cmd.Parameters["@price"].Value = nmrPrice.Value;
-                cmd.Parameters["@notes"].Value = txtNotes.Text;
-
-                conn.Open();
-
-                int numRow = cmd.ExecuteNonQuery();
-                if (numRow > 0)
-                {
-                    MessageBox.Show("Successfully updateing food", "Message");
-                    this.ResetText();
-                }
-                else
-                {
-                    MessageBox.Show("Updating food failed");
-                }
-
-                conn.Close();
-                conn.Dispose();
+                MessageBox.Show("Cap nhat du lieu thanh cong");
+                this.ResetText();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "SQL Error");
-            }
+            else MessageBox.Show("Cap nhat du lieu khong thanh cong. vVui long kiem tra lai du lieu nhap");
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

@@ -26,12 +26,12 @@ namespace DataAccess
                 Bill bill = new Bill();
                 bill.Id = Convert.ToInt32(reader["ID"]);
                 bill.Name = reader["Name"].ToString();
-                bill.TableId = Convert.ToInt32(reader["TableeID"]);
+                bill.TableId = Convert.ToInt32(reader["TableID"]);
                 bill.Amount = Convert.ToInt32(reader["Amount"]);
-                bill.Discount = float.Parse((string)reader["Discount"]);
-                bill.Tax = float.Parse((string)reader["Tax"]);
-                bill.Status = bool.Parse((string)reader["Status"]);
-                bill.CheckoutDate = DateTime.Parse((string)reader["CheckoutDate"]);
+                bill.Discount = float.Parse(reader["Discount"].ToString());
+                bill.Tax = float.Parse(reader["Tax"].ToString());
+                bill.Status = bool.Parse(reader["Status"].ToString());
+                bill.CheckoutDate = DateTime.Parse(reader["CheckoutDate"].ToString());
                 bill.Account = reader["Account"].ToString();
 
                 list.Add(bill);

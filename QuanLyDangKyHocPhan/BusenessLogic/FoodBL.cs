@@ -25,6 +25,20 @@ namespace BusenessLogic
             return null;
         }
 
+        public List<Food> GetByCateID(int ID)
+        {
+            List<Food> list = GetAll();
+            List<Food> result = new List<Food>();
+            foreach (var item in list)
+            {
+                if(item.FoodCategoryID == ID)
+                {
+                    result.Add(item);
+                }
+            }
+            return result;
+        }
+
         public List<Food> Find(string key)
         {
             List<Food> list = GetAll();
