@@ -31,6 +31,8 @@ namespace DataAccess
                 account.Tell = reader["Tell"].ToString();
                 account.DateCreate = reader["DateCreated"].ToString() == null ? DateTime.Parse((reader["DateCreated"].ToString())).ToShortDateString() :
                     (reader["DateCreated"].ToString());
+
+                list.Add(account);
             }
 
             conn.Close();

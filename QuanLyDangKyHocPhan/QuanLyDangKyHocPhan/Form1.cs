@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BusenessLogic;
 using DataAccess;
+using QuanLyDangKyHocPhan.CustomControl;
 
 namespace QuanLyDangKyHocPhan
 {
@@ -36,7 +37,11 @@ namespace QuanLyDangKyHocPhan
 
         #region cac ham xu ly
 
-        // Click in table user control
+        /// <summary>
+        /// Hàm chọn bàn để tạo hoá đơn cho bàn đó
+        /// </summary>
+        /// <param name="value">Bàn được chọn</param>
+        /// <param name="billId">Id hoá đon của bàn đó</param>
         private void SetValue(Table value,string billId)
         {
             this.lbNameTable.Text = "Bàn " + value.Name;
@@ -44,31 +49,48 @@ namespace QuanLyDangKyHocPhan
             this.curTable = value;
         }
 
-        //Create billDetail
+        /// <summary>
+        /// Tạo hoá đơn chi tiết mỗi khi thêm một món ăn mới
+        /// </summary>
+        /// <param name="billId">id hoá đơn</param>
+        /// <param name="foodId">id món ăn</param>
+        /// <param name="quantity">số lượng món ăn</param>
+        /// <returns></returns>
         private int InsertBillDetail(string billId, int foodId, int quantity)
         {
-            BillDetails bd = new BillDetails();
-            bd.Id = 0;
-            bd.InvoiceId = int.Parse(billId);
-            bd.FoodId = foodId;
-            bd.Quantity = quantity;
-
             BillDetailsBL bdBL = new BillDetailsBL();
+            BillDetails bd = new BillDetails();
+            if (billId == null) return -1;
+            else {
+                bd.Id = 0;
+                bd.InvoiceId = int.Parse(billId);
+                bd.FoodId = foodId;
+                bd.Quantity = quantity;
+            }
             return bdBL.Insert(bd);
         }
 
-        // click in food control
+        /// <summary>
+        /// Hàm tạo món ăn để xuất lên hoá đơn chi tiết
+        /// </summary>
+        /// <param name="value"> món ăn </param>
         private void SetFood(Food value)
         {
-
             var item = new CustomControl.OrderControl();
+            if (item != null && curBill != null &&curBillDetail != null)
+            {
+                InsertBillDetail(curBill, value.ID, item.GetQuantity());
+                item.initUI(value.Name, DateTime.Now.ToShortDateString(), value.Price, 1, value.ID, int.Parse(curBill), int.Parse(curBillDetail));
+                flOrder.Controls.Add(item);
+            }
 
-            InsertBillDetail(curBill, value.ID, item.GetQuantity());
-            item.initUI(value.Name, DateTime.Now.ToShortDateString(), value.Price, 1,value.ID,int.Parse(curBill),int.Parse(curBillDetail));
-            flOrder.Controls.Add(item);
         }
 
-        // Update status table
+        /// <summary>
+        /// Hàm Update status table Trống : Có người
+        /// </summary>
+        /// <param name="status"> 1 or 0</param>
+        /// <returns></returns>
         private int UpdateStatusTable(int status)
         {
             Table table = curTable;
@@ -80,7 +102,11 @@ namespace QuanLyDangKyHocPhan
             return tableBL.Update(table);
         }
 
-        //Update status Bills
+        /// <summary>
+        /// Hàm update status hoá đơn Đã thanh toán : chưa thanh toán
+        /// </summary>
+        /// <param name="status"> true : false </param>
+        /// <returns></returns>
         private int UpdateStatusBill(bool status)
         {
             Bill bill = new Bill();
@@ -91,7 +117,9 @@ namespace QuanLyDangKyHocPhan
             return billBL.UpdateStatus(bill);
         }
 
-        // Load Amount of Bills
+        /// <summary>
+        /// Hàm tính tiền cho hoá đơn
+        /// </summary>
         private void LoadAmount()
         {
             string connString = "server=WINDOWS-11\\SQLEXPRESS; database = RestaurantManagement; Integrated Security = true; ";
@@ -136,7 +164,12 @@ namespace QuanLyDangKyHocPhan
         }
         #endregion
 
-        // Load listTable onClick
+        /// <summary>
+        /// Sự kiện Click nút chọn danh sách bàn ăn
+        /// Xuất ra một bảng danh sách các bàn ăn
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnListTable_Click(object sender, EventArgs e)
         {
             List<Table> tables = new List<Table>();
@@ -154,7 +187,12 @@ namespace QuanLyDangKyHocPhan
             }
         }
 
-        //Load list Food onClick
+        /// <summary>
+        /// Sự kiện Click nút xem danh sách món ăn
+        /// Xuất ra danh sách món ăn để order
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnFood_Click(object sender, EventArgs e)
         {
             List<Food> foods = new List<Food>();
@@ -172,7 +210,12 @@ namespace QuanLyDangKyHocPhan
             }
         }
 
-        //Chose table
+        /// <summary>
+        /// Sự kiện Click nút chọn bàn ăn
+        /// Xuất ra một bảng danh sách các bàn ăn
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnTable_Click(object sender, EventArgs e)
         {
             ResetForm();
@@ -191,7 +234,12 @@ namespace QuanLyDangKyHocPhan
         {
             LoadAmount();
         }
-
+        
+        /// <summary>
+        /// Sự kiện click nút thanh toán
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnPay_Click(object sender, EventArgs e)
         {
             UpdateStatusTable(0);
@@ -201,6 +249,11 @@ namespace QuanLyDangKyHocPhan
             MessageBox.Show("Thanh toán thành công!!");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnBills_Click(object sender, EventArgs e)
         {
             BillOrderForm frm = new BillOrderForm();
@@ -234,6 +287,11 @@ namespace QuanLyDangKyHocPhan
 
         }
 
+        /// <summary>
+        /// Tìm kiếm theo từ khoá
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
             List<Food> foods = new List<Food>();

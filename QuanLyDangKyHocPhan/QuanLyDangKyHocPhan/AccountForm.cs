@@ -36,6 +36,11 @@ namespace QuanLyDangKyHocPhan
             }
         }
 
+        /// <summary>
+        /// Mã hoá mật khẩu MD5
+        /// </summary>
+        /// <param name="pass"></param>
+        /// <param name="index"></param>
         private void MahoaMD5(string pass, int index)
         {
             MD5 mh = MD5.Create();
@@ -57,9 +62,9 @@ namespace QuanLyDangKyHocPhan
         private void dgvAccount_Click(object sender, EventArgs e)
         {
             int index = dgvAccount.CurrentRow.Index;
-            curAcc = accounts[index];
             if (index != null)
             {
+                curAcc = accounts[index];
                 txtAccountName.Text = dgvAccount.Rows[index].Cells["AccountName"].Value.ToString();
                 txtPass.Text = dgvAccount.Rows[index].Cells["Password"].Value.ToString();
                 txtFullName.Text = dgvAccount.Rows[index].Cells["FullName"].Value.ToString();
